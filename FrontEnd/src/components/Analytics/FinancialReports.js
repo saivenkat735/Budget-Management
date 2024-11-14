@@ -176,10 +176,12 @@ const FinancialReports = () => {
         }, {});
 
         // Sum up spending by category
+        let totalSpending = 0;
         transactions.forEach(transaction => {
             if (transaction.transactionType === 'DEBIT' && transaction.categoryId) {
                 if (categorySpending[transaction.categoryId]) {
                     categorySpending[transaction.categoryId].amount += transaction.amount;
+                    totalSpending += transaction.amount;
                 }
             }
         });
@@ -189,7 +191,8 @@ const FinancialReports = () => {
 
         Object.values(categorySpending).forEach(category => {
             if (category.amount > 0) {
-                labels.push(category.name);
+                const percentage = ((category.amount / totalSpending) * 100).toFixed(1);
+                labels.push(`${category.name} (${percentage}%)`);
                 data.push(category.amount);
             }
         });
