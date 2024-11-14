@@ -64,7 +64,7 @@ const Sidebar = () => {
                     </Link> */}
                 </div>
 
-                <Link to="/analytics" className={`nav-item ${currentPath === '/analytics' ? 'active' : ''}`}>
+                <Link to="/reports" className={`nav-item ${currentPath === '/reports' ? 'active' : ''}`}>
                     <FaChartPie /> <span>Analytics</span>
                 </Link>
                 {/* <Link to="/settings" className={`nav-item ${currentPath === '/settings' ? 'active' : ''}`}>

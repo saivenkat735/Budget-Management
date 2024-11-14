@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import Bills from './components/Bills/Bills';
 import Category from './components/Category/Category.';
+import FinancialReports from './components/Analytics/FinancialReports';
 
 function App() {
     return (
@@ -46,6 +47,10 @@ function App() {
                           <Route path="/categories" element={
                           <ProtectedRoute>
                             <Category />
+                          </ProtectedRoute>} />
+                          <Route path="/reports" element={
+                          <ProtectedRoute>
+                            <FinancialReports />
                           </ProtectedRoute>} />
                         {/* <Route path="*" element={<Navigate to="/" />} /> */}
                     </Routes>

@@ -110,6 +110,8 @@ const Transaction = () => {
 
             // Handle new category creation if needed
             let categoryId = transactionFormData.categoryId;
+            const amount = parseFloat(transactionFormData.amount);
+
             if (!categoryId && transactionFormData.categoryName) {
                 try {
                     const newCategory = {
@@ -117,32 +119,36 @@ const Transaction = () => {
                         type: transactionFormData.type,
                         personId: personId,
                         isFloatingExpense: false,
-                        amountSpent: transactionFormData.type === 'DEBIT' ? parseFloat(transactionFormData.amount) : 0
+                        amountSpent: transactionFormData.type === 'DEBIT' ? amount : 0
                     };
                     const categoryResponse = await axios.post('http://localhost:2004/category', newCategory);
                     categoryId = categoryResponse.data.categoryId;
-                    await fetchCategories(); // Refresh categories list
                 } catch (error) {
                     console.error('Error creating new category:', error);
                     toast.error('Failed to create new category');
                     return;
                 }
             } else if (categoryId && transactionFormData.type === 'DEBIT') {
-                // Update existing category's amount spent only for DEBIT transactions
-                const category = categories.find(cat => cat.categoryId === categoryId);
+                // Update existing category's amount spent for DEBIT transactions
+                const category = categories.find(cat => cat.categoryId === parseInt(categoryId));
                 if (category) {
                     const updatedCategory = {
                         ...category,
-                        amountSpent: category.amountSpent + parseFloat(transactionFormData.amount)
+                        amountSpent: Number(category.amountSpent) + amount
                     };
-                    await axios.put(`http://localhost:2004/category/${categoryId}`, updatedCategory);
-                    await fetchCategories();
+                    try {
+                        await axios.put(`http://localhost:2004/category/${categoryId}`, updatedCategory);
+                    } catch (error) {
+                        console.error('Error updating category amount:', error);
+                        toast.error('Failed to update category amount');
+                        return;
+                    }
                 }
             }
 
             const transactionData = {
                 accountId: selectedAccountId,
-                amount: parseFloat(transactionFormData.amount),
+                amount: amount,
                 description: transactionFormData.description,
                 transactionType: transactionFormData.type,
                 date: transactionFormData.date,
@@ -153,12 +159,17 @@ const Transaction = () => {
             const response = await axios.post('http://localhost:2002/TransactionHistory/transaction', transactionData);
 
             if (response.status === 200) {
-                // Add the new transaction to the beginning of the transactions array
                 setTransactions(prevTransactions => [response.data, ...prevTransactions]);
                 toast.success('Transaction added successfully');
                 setShowTransactionModal(false);
                 resetTransactionForm();
-                await fetchAccounts(); // Just fetch accounts to update balances
+                
+                // Refresh all data
+                await Promise.all([
+                    fetchAccounts(),
+                    fetchCategories(),
+                    fetchTransactions()
+                ]);
             }
         } catch (error) {
             console.error('Error processing transaction:', error);

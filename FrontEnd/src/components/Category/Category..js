@@ -9,9 +9,9 @@ const Category = () => {
     const [newCategory, setNewCategory] = useState({ 
         categoryName: '',
         type: 'DEBIT',
-        personId: localStorage.getItem('personId'), // Get logged in user's ID
+        personId: localStorage.getItem('personId'),
         isFloatingExpense: false,
-        amountSpent: 0 // Initialize amount spent to 0
+        amountSpent: 0
     });
     const [editingCategory, setEditingCategory] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -22,10 +22,39 @@ const Category = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://localhost:2004/category');
-            // Filter out CREDIT type categories
-            const debitCategories = response.data.filter(cat => cat.type === 'DEBIT');
-            setCategories(debitCategories);
+            const personId = localStorage.getItem('personId');
+            if (!personId) {
+                toast.error('Session expired. Please log in again.');
+                return;
+            }
+
+            // Get all transactions and categories
+            const [transactionsResponse, categoriesResponse] = await Promise.all([
+                axios.get(`http://localhost:2002/TransactionHistory/person/${personId}`),
+                axios.get('http://localhost:2004/category')
+            ]);
+
+            // Filter debit categories
+            const debitCategories = categoriesResponse.data.filter(cat => cat.type === 'DEBIT');
+
+            // Calculate amount spent for each category based on transactions
+            const updatedCategories = debitCategories.map(category => {
+                const categoryTransactions = transactionsResponse.data.filter(
+                    transaction => transaction.categoryId === category.categoryId && 
+                    transaction.transactionType === 'DEBIT'
+                );
+                
+                const totalSpent = categoryTransactions.reduce((sum, transaction) => {
+                    return sum + transaction.amount;
+                }, 0);
+
+                return {
+                    ...category,
+                    amountSpent: totalSpent
+                };
+            });
+
+            setCategories(updatedCategories);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching categories:', error);
@@ -39,8 +68,8 @@ const Category = () => {
         try {
             const response = await axios.post('http://localhost:2004/category', {
                 ...newCategory,
-                type: 'DEBIT', // Force DEBIT type
-                amountSpent: 0 // Always initialize new categories with 0 amount spent
+                type: 'DEBIT',
+                amountSpent: 0
             });
             setCategories([...categories, response.data]);
             setNewCategory({ 
@@ -61,11 +90,12 @@ const Category = () => {
         try {
             const response = await axios.put(`http://localhost:2004/category/${id}`, {
                 ...editingCategory,
-                type: 'DEBIT' // Force DEBIT type
+                type: 'DEBIT'
             });
             setCategories(categories.map(cat => cat.categoryId === id ? response.data : cat));
             setEditingCategory(null);
             toast.success('Category updated successfully');
+            await fetchCategories(); // Refresh to get updated amounts
         } catch (error) {
             console.error('Error updating category:', error);
             toast.error('Failed to update category');
@@ -83,13 +113,11 @@ const Category = () => {
         }
     };
 
-    // Method to update category amount spent when transactions occur
     const updateCategoryAmountSpent = async (categoryId, amount) => {
         try {
             const category = categories.find(cat => cat.categoryId === categoryId);
             if (!category) return;
 
-            // For DEBIT transactions, add to amount spent
             const newAmountSpent = category.amountSpent + parseFloat(amount);
 
             const updatedCategory = {
@@ -97,10 +125,8 @@ const Category = () => {
                 amountSpent: newAmountSpent
             };
 
-            const response = await axios.put(`http://localhost:2004/category/${categoryId}`, updatedCategory);
-            setCategories(categories.map(cat => 
-                cat.categoryId === categoryId ? response.data : cat
-            ));
+            await axios.put(`http://localhost:2004/category/${categoryId}`, updatedCategory);
+            await fetchCategories(); // Refresh to get updated amounts
         } catch (error) {
             console.error('Error updating category amount spent:', error);
             toast.error('Failed to update category amount spent');
@@ -181,7 +207,7 @@ const Category = () => {
                                     <>
                                         <div className="category-info">
                                             <h4>{category.categoryName}</h4>
-                                            <p>Amount Spent: ₹{category.amountSpent}</p>
+                                            <p>Amount Spent: ₹{category.amountSpent.toLocaleString()}</p>
                                             <p>Floating Expense: {category.isFloatingExpense ? 'Yes' : 'No'}</p>
                                         </div>
                                         <div className="category-actions">

@@ -108,7 +108,7 @@ const Bills = () => {
                 accountId: personId
             };
 
-            const response = await axios.get(`http://localhost:9007/bills/update/${billId}`, updateData);
+            const response = await axios.put(`http://localhost:9007/bills/update/${billId}`, updateData);
 
             if (response.status === 200) {
                 toast.success('Bill updated successfully');
@@ -117,7 +117,8 @@ const Bills = () => {
             }
         } catch (error) {
             console.error('Error updating bill:', error);
-            toast.error('Failed to update bill');
+            const errorMessage = error.response?.data?.message || 'Failed to update bill';
+            toast.error(errorMessage);
         }
     };
 
