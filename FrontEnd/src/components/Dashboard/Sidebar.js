@@ -1,0 +1,97 @@
+import React from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { 
+    FaHome, 
+    FaWallet, 
+    FaExchangeAlt, 
+    FaFileInvoice, 
+    FaChartPie, 
+    FaCog,
+    FaTags,
+    FaList,
+    FaArrowLeft,
+    FaSignOutAlt
+} from 'react-icons/fa';
+import './Sidebar.css';
+import { useAuth } from '../../context/AuthContext';
+
+const Sidebar = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const currentPath = location.pathname;
+    const { logout } = useAuth();
+    
+    // const handleLogout = () => {
+    //     if (window.confirm('Are you sure you want to logout?')) {
+    //         localStorage.removeItem('authToken');
+    //         localStorage.removeItem('personId');
+    //         localStorage.removeItem('userName');
+    //         localStorage.clear();
+    //         navigate('/', { replace: true });
+    //     }
+    // };
+
+    return (
+        <div className="sidebar">
+            <div className="sidebar-header">
+                <h2>BudgetWise</h2>
+            </div>
+            <nav className="sidebar-nav">
+                {/* Back button for Accounts page */}
+                
+
+                <Link to="/dashboard" className={`nav-item ${currentPath === '/dashboard' ? 'active' : ''}`}>
+                    <FaHome /> <span>Dashboard</span>
+                </Link>
+                <Link to="/accounts" className={`nav-item ${currentPath === '/accounts' ? 'active' : ''}`}>
+                    <FaWallet /> <span>Accounts</span>
+                </Link>
+                <Link to="/transactions" className={`nav-item ${currentPath === '/transactions' ? 'active' : ''}`}>
+                    <FaExchangeAlt /> <span>Transactions</span>
+                </Link>
+                <Link to="/bills" className={`nav-item ${currentPath === '/bills' ? 'active' : ''}`}>
+                    <FaFileInvoice /> <span>Bills</span>
+                </Link>
+
+                {/* Categories Section */}
+                <div className="nav-section">
+                    <h3 className="nav-section-title">Categories</h3>
+                    <Link to="/categories" className={`nav-item ${currentPath === '/categories' ? 'active' : ''}`}>
+                        <FaTags /> <span>Manage Categories</span>
+                    </Link>
+                    {/* <Link to="/category-overview" className={`nav-item ${currentPath === '/category-overview' ? 'active' : ''}`}>
+                        <FaList /> <span>Category Overview</span>
+                    </Link> */}
+                </div>
+
+                <Link to="/analytics" className={`nav-item ${currentPath === '/analytics' ? 'active' : ''}`}>
+                    <FaChartPie /> <span>Analytics</span>
+                </Link>
+                {/* <Link to="/settings" className={`nav-item ${currentPath === '/settings' ? 'active' : ''}`}>
+                    <FaCog /> <span>Settings</span>
+                </Link> */}
+                {/* <Link to="/login" className={`nav-item ${currentPath === '/login' ? 'active' : ''}`}>
+                    <FaSignOutAlt /> <span>Login</span>
+                </Link> */}
+            </nav>
+
+            {/* User Profile Section */}
+            <div className="sidebar-footer">
+                {/* <div className="user-profile">
+                    <div className="user-avatar">
+                       
+                    </div>
+                    <div className="user-info">
+                        <span className="user-name">User Name</span>
+                        <span className="user-email">user@example.com</span>
+                    </div>
+                </div> */}
+                <button className="logout-btn" onClick={()=>{logout()}}>
+                    <FaSignOutAlt /> <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    );
+};
+
+export default Sidebar;

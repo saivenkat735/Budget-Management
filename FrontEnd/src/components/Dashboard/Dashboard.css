@@ -1,0 +1,494 @@
+.dashboard-container {
+    padding: 24px;
+    background: #f8fafc;
+    min-height: 100vh;
+}
+
+.dashboard-header {
+    margin-bottom: 32px;
+    padding: 24px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-header h2 {
+    color: #1e293b;
+    font-size: 1.875rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.dashboard-header p {
+    color: #64748b;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Balance Overview Section */
+.balance-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.balance-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.balance-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.balance-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.balance-card.total .balance-icon {
+    background: rgba(79, 70, 229, 0.1);
+    color: #4f46e5;
+}
+
+.balance-card.expenses .balance-icon {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.balance-card.available .balance-icon {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.balance-info h3 {
+    color: #64748b;
+    font-size: 1rem;
+    margin: 0 0 8px 0;
+}
+
+.balance-info p {
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Accounts Section */
+.accounts-section {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.accounts-section h3 {
+    color: #1e293b;
+    font-size: 1.25rem;
+    margin: 0 0 20px 0;
+    font-weight: 600;
+}
+
+.accounts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.account-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.account-card.inactive {
+    opacity: 0.7;
+    background: #f1f5f9;
+}
+
+.account-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.account-info h4 {
+    color: #1e293b;
+    font-size: 1.125rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+.account-type {
+    color: #64748b;
+    font-size: 0.875rem;
+    padding: 4px 8px;
+    background: rgba(100, 116, 139, 0.1);
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.account-status {
+    color: #ef4444;
+    font-size: 0.875rem;
+    padding: 4px 8px;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.account-balance {
+    margin-top: 12px;
+    text-align: right;
+}
+
+.account-balance p {
+    color: #4f46e5;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Upcoming Bills Section */
+.upcoming-bills {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.upcoming-bills h3 {
+    color: #1e293b;
+    font-size: 1.25rem;
+    margin: 0 0 20px 0;
+    font-weight: 600;
+}
+
+.bills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.bill-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.bill-item.urgent {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.bill-info h4 {
+    color: #1e293b;
+    font-size: 1.125rem;
+    margin: 0 0 4px 0;
+}
+
+.bill-info p {
+    color: #4f46e5;
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.bill-due {
+    text-align: right;
+}
+
+.bill-due span {
+    display: block;
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.bill-due span:first-child {
+    color: #1e293b;
+    font-weight: 500;
+}
+
+/* Recent Transactions Section */
+.recent-transactions {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.recent-transactions h3 {
+    color: #1e293b;
+    font-size: 1.25rem;
+    margin: 0 0 20px 0;
+    font-weight: 600;
+}
+
+.transactions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.transaction-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.transaction-category {
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.transaction-date {
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.transaction-amount {
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+.transaction-amount.credit {
+    color: #10b981;
+}
+
+.transaction-amount.debit {
+    color: #ef4444;
+}
+
+/* Loading and Error States */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 16px;
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #4f46e5;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-container {
+    text-align: center;
+    padding: 48px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin: 24px;
+}
+
+.error-container h3 {
+    color: #ef4444;
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+}
+
+.retry-button {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.retry-button:hover {
+    background: #4338ca;
+    transform: translateY(-2px);
+}
+
+/* Layout */
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.dashboard-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 24px;
+    background: #f8fafc;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    .dashboard-container,
+    .dashboard-content {
+        background: #0f172a;
+    }
+
+    .dashboard-header,
+    .balance-card,
+    .accounts-section,
+    .upcoming-bills,
+    .recent-transactions,
+    .error-container {
+        background: #1e293b;
+    }
+
+    .dashboard-header h2,
+    .account-info h4,
+    .transaction-category,
+    .balance-info p,
+    .bill-info h4,
+    .bill-due span:first-child {
+        color: #f8fafc;
+    }
+
+    .account-card,
+    .transaction-item,
+    .bill-item {
+        background: #334155;
+    }
+
+    .account-card.inactive {
+        background: #1e293b;
+    }
+
+    .bill-item.urgent {
+        background: rgba(239, 68, 68, 0.2);
+    }
+
+    .account-type,
+    .transaction-date,
+    .dashboard-header p,
+    .balance-info h3,
+    .bill-due span {
+        color: #94a3b8;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .balance-overview {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-content {
+        margin-left: 0;
+        padding: 16px;
+    }
+
+    .dashboard-header,
+    .balance-card,
+    .accounts-section,
+    .upcoming-bills,
+    .recent-transactions {
+        padding: 16px;
+    }
+
+    .balance-info p {
+        font-size: 1.25rem;
+    }
+
+    .accounts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Toast Customization */
+.Toastify__toast {
+    background-color: #f8fafc !important;
+    color: #1e293b !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.Toastify__toast--success {
+    background-color: #cbf3da !important;
+    color: black !important;
+    border-left: 4px solid #22c55e !important;
+}
+
+.Toastify__toast--error {
+    background-color: #ef4444 !important;
+    color: white !important;
+    border-left: 4px solid #ef4444 !important;
+}
+
+.Toastify__toast--warning {
+    background-color: #f59e0b !important;
+    color: white !important;
+    border-left: 4px solid #f59e0b !important;
+}
+
+.Toastify__toast--info {
+    background-color: #3b82f6 !important;
+    color: white !important;
+    border-left: 4px solid #3b82f6 !important;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .Toastify__toast {
+        background-color: rgba(30, 41, 59, 0.95) !important;
+        color: #f1f5f9 !important;
+    }
+
+    .Toastify__toast--success {
+        background-color: #22c55e !important;
+        border-left: 4px solid #22c55e !important;
+    }
+
+    .Toastify__toast--error {
+        background-color: #ef4444 !important;
+        border-left: 4px solid #ef4444 !important;
+    }
+
+    .Toastify__toast--warning {
+        background-color: #f59e0b !important;
+        border-left: 4px solid #f59e0b !important;
+    }
+
+    .Toastify__toast--info {
+        background-color: #3b82f6 !important;
+        border-left: 4px solid #3b82f6 !important;
+    }
+}
