@@ -18,7 +18,7 @@ const Dashboard = () => {
         recentTransactions: [],
         upcomingBills: [],
         userName: user?.username || 'User',
-        userEmail: user?.email || 'user@example.com'
+        userEmail: user?.email || 'example@email.com'
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -59,7 +59,7 @@ const Dashboard = () => {
             // Fetch all data in parallel
             const [accountsResponse, billsResponse, transactionsResponse] = await Promise.all([
                 axios.get(`http://localhost:2001/api/accounts/person/${personId}`),
-                axios.get(`http://localhost:9007/bills/person/${personId}`), // Changed to get bills by personId
+                axios.get(`http://localhost:9007/bills/person/${personId}`),
                 api.transactions.get(`http://localhost:2002/TransactionHistory/person/${personId}/recent`)
             ]);
 
@@ -68,10 +68,9 @@ const Dashboard = () => {
                 throw new Error('Unable to fetch account information');
             }
 
-            // Calculate the total balance and expenses
-            const totalBalance = accountsResponse.data
-                .filter(acc => acc.active)
-                .reduce((sum, acc) => sum + parseFloat(acc.balance), 0);
+            // Filter out inactive accounts and calculate total balance
+            const activeAccounts = accountsResponse.data.filter(acc => acc.active);
+            const totalBalance = activeAccounts.reduce((sum, acc) => sum + parseFloat(acc.balance), 0);
 
             // Filter out paid bills and calculate fixed expenses only for unpaid bills
             const allBills = billsResponse.data || [];
@@ -87,15 +86,24 @@ const Dashboard = () => {
 
             const availableBalance = totalBalance - fixedExpenses;
 
+            // Map transactions with account names
+            const transactionsWithAccounts = transactionsResponse.data.map(transaction => {
+                const account = activeAccounts.find(acc => acc.accountId === transaction.accountId);
+                return {
+                    ...transaction,
+                    accountName: account ? account.accountName : 'Unknown Account'
+                };
+            });
+
             // Update dashboard data
             setDashboardData(prev => ({
                 ...prev,
-                accounts: accountsResponse.data,
+                accounts: activeAccounts,
                 totalBalance,
                 fixedExpenses,
                 availableBalance,
                 upcomingBills,
-                recentTransactions: transactionsResponse.data || [],
+                recentTransactions: transactionsWithAccounts || [],
             }));
 
             setLoading(false);
@@ -181,12 +189,11 @@ const Dashboard = () => {
                                 {dashboardData.accounts.map(account => (
                                     <div 
                                         key={account.accountId} 
-                                        className={`account-card ${!account.active ? 'inactive' : ''}`}
+                                        className="account-card"
                                     >
                                         <div className="account-info">
                                             <h4>{account.accountName}</h4>
                                             <span className="account-type">{account.cardType}</span>
-                                            {!account.active && <span className="account-status">Deactivated</span>}
                                         </div>
                                         <div className="account-balance">
                                             <p>₹{parseFloat(account.balance).toLocaleString()}</p>
@@ -228,24 +235,29 @@ const Dashboard = () => {
 
                         <div className="recent-transactions">
                             <h3>Recent Transactions</h3>
-                            <div className="transactions-list">
-                                {dashboardData.recentTransactions.slice(0, 5).map(transaction => (
-                                    <div key={transaction.transactionId} className="transaction-item">
-                                        <div className="transaction-info">
-                                            <span className="transaction-category">{transaction.category}</span>
-                                            <span className="transaction-date">
-                                                {new Date(transaction.date).toLocaleDateString()}
-                                            </span>
-                                        </div>
-                                        <div className={`transaction-amount ${
-                                            transaction.transactionType.toLowerCase()
-                                        }`}>
-                                            {transaction.transactionType === 'CREDIT' ? '+' : '-'}
-                                            ₹{parseFloat(transaction.amount).toLocaleString()}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                            <table className="transactions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Account</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {dashboardData.recentTransactions.slice(0, 5).map(transaction => (
+                                        <tr key={transaction.transactionId}>
+                                            <td>{transaction.accountName}</td>
+                                            <td>{new Date(transaction.date).toLocaleDateString()}</td>
+                                            <td className={transaction.transactionType.toLowerCase()}>
+                                                {transaction.transactionType === 'CREDIT' ? '+' : '-'}
+                                                ₹{parseFloat(transaction.amount).toLocaleString()}
+                                            </td>
+                                            <td>{transaction.transactionType}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 )}

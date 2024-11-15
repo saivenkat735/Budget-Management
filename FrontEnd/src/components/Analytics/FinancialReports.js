@@ -131,7 +131,7 @@ const FinancialReports = () => {
             let key;
             
             if (selectedTimeframe === 'month') {
-                key = `${date.getFullYear()}-${date.getMonth() + 1}`;
+                key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
             } else if (selectedTimeframe === 'quarter') {
                 const quarter = Math.floor(date.getMonth() / 3) + 1;
                 key = `${date.getFullYear()}-Q${quarter}`;
@@ -144,19 +144,22 @@ const FinancialReports = () => {
             }
 
             if (transaction.transactionType === 'CREDIT') {
-                acc[key].income += transaction.amount;
+                acc[key].income += parseFloat(transaction.amount);
             } else {
-                acc[key].expenses += transaction.amount;
+                acc[key].expenses += parseFloat(transaction.amount);
             }
 
             return acc;
         }, {});
 
-        // Convert grouped data to arrays
-        Object.entries(groupedTransactions).forEach(([label, data]) => {
-            timeframeLabels.push(label);
-            incomeData.push(data.income);
-            expenseData.push(data.expenses);
+        // Sort keys chronologically
+        const sortedKeys = Object.keys(groupedTransactions).sort();
+
+        // Convert grouped data to arrays maintaining chronological order
+        sortedKeys.forEach(key => {
+            timeframeLabels.push(key);
+            incomeData.push(groupedTransactions[key].income);
+            expenseData.push(groupedTransactions[key].expenses);
         });
 
         return {
@@ -205,23 +208,27 @@ const FinancialReports = () => {
 
         transactions.forEach(transaction => {
             const date = new Date(transaction.date);
-            const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+            const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
             if (!monthlyData[monthKey]) {
                 monthlyData[monthKey] = { income: 0, expenses: 0 };
             }
 
             if (transaction.transactionType === 'CREDIT') {
-                monthlyData[monthKey].income += transaction.amount;
+                monthlyData[monthKey].income += parseFloat(transaction.amount);
             } else {
-                monthlyData[monthKey].expenses += transaction.amount;
+                monthlyData[monthKey].expenses += parseFloat(transaction.amount);
             }
         });
 
         const labels = [];
         const savingsRates = [];
 
-        Object.entries(monthlyData).forEach(([month, data]) => {
+        // Sort keys chronologically
+        const sortedKeys = Object.keys(monthlyData).sort();
+
+        sortedKeys.forEach(month => {
+            const data = monthlyData[month];
             if (data.income > 0) {
                 const savingsRate = ((data.income - data.expenses) / data.income) * 100;
                 labels.push(month);
@@ -238,18 +245,20 @@ const FinancialReports = () => {
         transactions.forEach(transaction => {
             if (transaction.transactionType === 'DEBIT') {
                 const date = new Date(transaction.date);
-                const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+                const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
                 if (!monthlySpending[monthKey]) {
                     monthlySpending[monthKey] = 0;
                 }
 
-                monthlySpending[monthKey] += transaction.amount;
+                monthlySpending[monthKey] += parseFloat(transaction.amount);
             }
         });
 
-        const labels = Object.keys(monthlySpending);
-        const data = Object.values(monthlySpending);
+        // Sort keys chronologically
+        const sortedKeys = Object.keys(monthlySpending).sort();
+        const labels = sortedKeys;
+        const data = sortedKeys.map(key => monthlySpending[key]);
 
         return { labels, data };
     };
@@ -350,7 +359,21 @@ const FinancialReports = () => {
                                         maintainAspectRatio: false,
                                         scales: {
                                             y: {
-                                                beginAtZero: true
+                                                beginAtZero: true,
+                                                ticks: {
+                                                    callback: function(value) {
+                                                        return '₹' + value;
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        plugins: {
+                                            tooltip: {
+                                                callbacks: {
+                                                    label: function(context) {
+                                                        return context.dataset.label + ': ₹' + context.raw;
+                                                    }
+                                                }
                                             }
                                         }
                                     }}
@@ -382,7 +405,12 @@ const FinancialReports = () => {
                                         scales: {
                                             y: {
                                                 beginAtZero: true,
-                                                max: 100
+                                                max: 100,
+                                                ticks: {
+                                                    callback: function(value) {
+                                                        return value + '%';
+                                                    }
+                                                }
                                             }
                                         }
                                     }}
@@ -400,7 +428,21 @@ const FinancialReports = () => {
                                         maintainAspectRatio: false,
                                         scales: {
                                             y: {
-                                                beginAtZero: true
+                                                beginAtZero: true,
+                                                ticks: {
+                                                    callback: function(value) {
+                                                        return '₹' + value;
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        plugins: {
+                                            tooltip: {
+                                                callbacks: {
+                                                    label: function(context) {
+                                                        return 'Spending: ₹' + context.raw;
+                                                    }
+                                                }
                                             }
                                         }
                                     }}
