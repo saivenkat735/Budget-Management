@@ -103,9 +103,9 @@ const Login = ({ isRegister = false }) => {
                 <span style={{marginRight: '8px', fontSize: '24px'}}>←</span>
                 Back to Home
             </button>
-            <div className="auth-card">
+            <div className="auth-card" style={{ minHeight: isRegister ? '500px' : '400px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <h2>{isRegister ? 'Create Account' : 'Welcome Back'}</h2>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                     <div className="form-group">
                         <label>Username</label>
                         <input
@@ -154,12 +154,13 @@ const Login = ({ isRegister = false }) => {
                         type="submit" 
                         className="submit-btn"
                         disabled={loading}
+                        style={{ marginTop: '10px' }}
                     >
                         {loading ? 'Processing...' : (isRegister ? 'Create Account' : 'Sign In')}
                     </button>
                 </form>
 
-                <div className="auth-footer">
+                <div className="auth-footer" style={{ marginTop: '20px' }}>
                     <p>
                         {isRegister ? (
                             <>

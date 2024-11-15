@@ -10,7 +10,7 @@ const Accounts = () => {
     const [showModal, setShowModal] = useState(false);
     const [modalMode, setModalMode] = useState('create');
     const [selectedAccount, setSelectedAccount] = useState(null);
-    const [activeTab, setActiveTab] = useState('active'); // New state for tab selection
+    const [activeTab, setActiveTab] = useState('active'); 
     const [formData, setFormData] = useState({
         accountName: '',
         cardType: '',
@@ -197,10 +197,10 @@ const Accounts = () => {
 
                     {showModal && (
                         <div className="modal">
-                            <div className="modal-content">
+                            <div className="modal-content" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                                 <h3>{modalMode === 'create' ? 'Create New Account' : 'Edit Account'}</h3>
-                                <form onSubmit={modalMode === 'create' ? handleCreateAccount : handleEditAccount}>
-                                    <div className="form-group">
+                                <form onSubmit={modalMode === 'create' ? handleCreateAccount : handleEditAccount} style={{ display: 'flex', flexDirection: 'column', gap: '15px', flex: 1, justifyContent: 'center' }}>
+                                    <div className="form-group" style={{ marginBottom: '15px' }}>
                                         <label>Account Name</label>
                                         <input
                                             type="text"
@@ -211,7 +211,7 @@ const Accounts = () => {
                                         />
                                     </div>
 
-                                    <div className="form-group">
+                                    <div className="form-group" style={{ marginBottom: '15px' }}>
                                         <label>Account Type</label>
                                         <select
                                             value={formData.cardType.toUpperCase()}
@@ -226,7 +226,7 @@ const Accounts = () => {
                                         </select>
                                     </div>
 
-                                    <div className="form-group">
+                                    <div className="form-group" style={{ marginBottom: '15px' }}>
                                         <label>Balance</label>
                                         <input
                                             type="number"
@@ -236,7 +236,7 @@ const Accounts = () => {
                                         />
                                     </div>
 
-                                    <div className="modal-actions">
+                                    <div className="modal-actions" style={{ marginTop: 'auto' }}>
                                         <button type="submit" className="confirm-btn">
                                             {modalMode === 'create' ? 'Create Account' : 'Update Account'}
                                         </button>

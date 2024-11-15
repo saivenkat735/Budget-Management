@@ -51,7 +51,6 @@ const Transaction = () => {
             const personId = localStorage.getItem('personId');
             const response = await axios.get(`http://localhost:2002/TransactionHistory/person/${personId}`);
             console.log(response.data);
-            // Sort transactions by transactionId in descending order
             const sortedTransactions = response.data.sort((a, b) => b.transactionId - a.transactionId);
             setTransactions(sortedTransactions);
             setLoading(false);
@@ -64,11 +63,9 @@ const Transaction = () => {
 
     const updateCategoryAmountSpent = async (categoryId, amount, type) => {
         try {
-            // Get current category
             const category = categories.find(cat => cat.categoryId === categoryId);
             if (!category) return;
 
-            // Calculate new amount spent
             let newAmountSpent = category.amountSpent;
             if (type === 'DEBIT') {
                 newAmountSpent += parseFloat(amount);
@@ -76,14 +73,13 @@ const Transaction = () => {
                 newAmountSpent -= parseFloat(amount);
             }
 
-            // Update category with new amount spent
             const updatedCategory = {
                 ...category,
                 amountSpent: newAmountSpent
             };
 
             await axios.put(`http://localhost:2004/category/${categoryId}`, updatedCategory);
-            await fetchCategories(); // Refresh categories list
+            await fetchCategories();
         } catch (error) {
             console.error('Error updating category amount spent:', error);
             toast.error('Failed to update category amount spent');
@@ -108,7 +104,6 @@ const Transaction = () => {
                 return;
             }
 
-            // Handle new category creation if needed
             let categoryId = transactionFormData.categoryId;
             const amount = parseFloat(transactionFormData.amount);
 
@@ -129,7 +124,6 @@ const Transaction = () => {
                     return;
                 }
             } else if (categoryId && transactionFormData.type === 'DEBIT') {
-                // Update existing category's amount spent for DEBIT transactions
                 const category = categories.find(cat => cat.categoryId === parseInt(categoryId));
                 if (category) {
                     const updatedCategory = {
@@ -164,7 +158,6 @@ const Transaction = () => {
                 setShowTransactionModal(false);
                 resetTransactionForm();
                 
-                // Refresh all data
                 await Promise.all([
                     fetchAccounts(),
                     fetchCategories(),
@@ -182,7 +175,6 @@ const Transaction = () => {
             try {
                 const transaction = transactions.find(t => t.transactionId === transactionId);
                 
-                // Update category amount spent if it's a DEBIT transaction
                 if (transaction && transaction.categoryId && transaction.transactionType === 'DEBIT') {
                     const category = categories.find(cat => cat.categoryId === transaction.categoryId);
                     if (category) {
@@ -281,9 +273,9 @@ const Transaction = () => {
 
                     {showTransactionModal && (
                         <div className="modal">
-                            <div className="modal-content">
+                            <div className="modal-content" style={{ width: '600px', height: 'auto', padding: '20px' }}>
                                 <h3>Add New Transaction</h3>
-                                <form onSubmit={handleTransaction}>
+                                <form onSubmit={handleTransaction} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
                                     <div className="form-group">
                                         <label>Account</label>
                                         <select
@@ -340,18 +332,6 @@ const Transaction = () => {
                                         />
                                     </div>
                                     <div className="form-group">
-                                        <label>Description</label>
-                                        <input
-                                            type="text"
-                                            value={transactionFormData.description}
-                                            onChange={(e) => setTransactionFormData({
-                                                ...transactionFormData,
-                                                description: e.target.value
-                                            })}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
                                         <label>Type</label>
                                         <select
                                             value={transactionFormData.type}
@@ -365,6 +345,18 @@ const Transaction = () => {
                                         </select>
                                     </div>
                                     <div className="form-group">
+                                        <label>Description</label>
+                                        <input
+                                            type="text"
+                                            value={transactionFormData.description}
+                                            onChange={(e) => setTransactionFormData({
+                                                ...transactionFormData,
+                                                description: e.target.value
+                                            })}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-group">
                                         <label>Date</label>
                                         <input
                                             type="date"
@@ -376,7 +368,7 @@ const Transaction = () => {
                                             required
                                         />
                                     </div>
-                                    <div className="modal-actions">
+                                    <div className="modal-actions" style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center', gap: '10px' }}>
                                         <button type="submit">Submit</button>
                                         <button type="button" onClick={() => setShowTransactionModal(false)}>Cancel</button>
                                     </div>

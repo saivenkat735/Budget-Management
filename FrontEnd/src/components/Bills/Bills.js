@@ -280,33 +280,39 @@ const Bills = () => {
                 {/* Add Bill Modal */}
                 {showBillModal && (
                     <div className="modal">
-                        <div className="modal-content">
+                        <div className="modal-content" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                             <h3>Add New Bill</h3>
-                            <form onSubmit={handleAddBill}>
-                                <label>Bill Name</label>
-                                <input
-                                    type="text"
-                                    placeholder="Bill Name"
-                                    value={billFormData.billName}
-                                    onChange={(e) => setBillFormData({...billFormData, billName: e.target.value})}
-                                    required
-                                />
-                                <label>Amount</label>
-                                <input
-                                    type="number"
-                                    placeholder="Amount"
-                                    value={billFormData.amount}
-                                    onChange={(e) => setBillFormData({...billFormData, amount: e.target.value})}
-                                    required
-                                />
-                                <label>Due Date</label>
-                                <input
-                                    type="date"
-                                    value={billFormData.dueDate}
-                                    onChange={(e) => setBillFormData({...billFormData, dueDate: e.target.value})}
-                                    required
-                                />
-                                <div className="modal-buttons">
+                            <form onSubmit={handleAddBill} style={{ display: 'flex', flexDirection: 'column', gap: '15px', flex: 1, justifyContent: 'center' }}>
+                                <div className="form-group" style={{ marginBottom: '15px' }}>
+                                    <label>Bill Name</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Bill Name"
+                                        value={billFormData.billName}
+                                        onChange={(e) => setBillFormData({...billFormData, billName: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group" style={{ marginBottom: '15px' }}>
+                                    <label>Amount</label>
+                                    <input
+                                        type="number"
+                                        placeholder="Amount"
+                                        value={billFormData.amount}
+                                        onChange={(e) => setBillFormData({...billFormData, amount: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group" style={{ marginBottom: '15px' }}>
+                                    <label>Due Date</label>
+                                    <input
+                                        type="date"
+                                        value={billFormData.dueDate}
+                                        onChange={(e) => setBillFormData({...billFormData, dueDate: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="modal-buttons" style={{ marginTop: 'auto' }}>
                                     <button type="submit">Add Bill</button>
                                     <button type="button" onClick={() => setShowBillModal(false)}>Cancel</button>
                                 </div>
@@ -318,33 +324,42 @@ const Bills = () => {
                 {/* Edit Bill Modal */}
                 {editingBill && (
                     <div className="modal">
-                        <div className="modal-content">
+                        <div className="modal-content" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                             <h3>Edit Bill</h3>
                             <form onSubmit={(e) => {
                                 e.preventDefault();
                                 handleUpdateBill(editingBill.billId);
-                            }}>
-                                <input
-                                    type="text"
-                                    placeholder="Bill Name"
-                                    value={editingBill.billName}
-                                    onChange={(e) => setEditingBill({...editingBill, billName: e.target.value})}
-                                    required
-                                />
-                                <input
-                                    type="number"
-                                    placeholder="Amount"
-                                    value={editingBill.amount}
-                                    onChange={(e) => setEditingBill({...editingBill, amount: e.target.value})}
-                                    required
-                                />
-                                <input
-                                    type="date"
-                                    value={editingBill.dueDate?.split('T')[0]}
-                                    onChange={(e) => setEditingBill({...editingBill, dueDate: e.target.value})}
-                                    required
-                                />
-                                <div className="modal-buttons">
+                            }} style={{ display: 'flex', flexDirection: 'column', gap: '15px', flex: 1, justifyContent: 'center' }}>
+                                <div className="form-group" style={{ marginBottom: '15px' }}>
+                                    <label>Bill Name</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Bill Name"
+                                        value={editingBill.billName}
+                                        onChange={(e) => setEditingBill({...editingBill, billName: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group" style={{ marginBottom: '15px' }}>
+                                    <label>Amount</label>
+                                    <input
+                                        type="number"
+                                        placeholder="Amount"
+                                        value={editingBill.amount}
+                                        onChange={(e) => setEditingBill({...editingBill, amount: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group" style={{ marginBottom: '15px' }}>
+                                    <label>Due Date</label>
+                                    <input
+                                        type="date"
+                                        value={editingBill.dueDate?.split('T')[0]}
+                                        onChange={(e) => setEditingBill({...editingBill, dueDate: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="modal-buttons" style={{ marginTop: 'auto' }}>
                                     <button type="submit">Update Bill</button>
                                     <button type="button" onClick={() => setEditingBill(null)}>Cancel</button>
                                 </div>
