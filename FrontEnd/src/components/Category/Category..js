@@ -15,10 +15,11 @@ const Category = () => {
     });
     const [editingCategory, setEditingCategory] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM format
 
     useEffect(() => {
         fetchCategories();
-    }, []);
+    }, [selectedMonth]);
 
     const fetchCategories = async () => {
         try {
@@ -37,11 +38,20 @@ const Category = () => {
             // Filter debit categories
             const debitCategories = categoriesResponse.data.filter(cat => cat.type === 'DEBIT');
 
-            // Calculate amount spent for each category based on transactions
+            // Filter transactions for selected month
+            const monthStart = new Date(selectedMonth + '-01');
+            const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
+
+            // Calculate amount spent for each category based on filtered transactions
             const updatedCategories = debitCategories.map(category => {
                 const categoryTransactions = transactionsResponse.data.filter(
-                    transaction => transaction.categoryId === category.categoryId && 
-                    transaction.transactionType === 'DEBIT'
+                    transaction => {
+                        const transactionDate = new Date(transaction.date);
+                        return transaction.categoryId === category.categoryId && 
+                               transaction.transactionType === 'DEBIT' &&
+                               transactionDate >= monthStart &&
+                               transactionDate <= monthEnd;
+                    }
                 );
                 
                 const totalSpent = categoryTransactions.reduce((sum, transaction) => {
@@ -95,7 +105,7 @@ const Category = () => {
             setCategories(categories.map(cat => cat.categoryId === id ? response.data : cat));
             setEditingCategory(null);
             toast.success('Category updated successfully');
-            await fetchCategories(); // Refresh to get updated amounts
+            await fetchCategories();
         } catch (error) {
             console.error('Error updating category:', error);
             toast.error('Failed to update category');
@@ -113,24 +123,16 @@ const Category = () => {
         }
     };
 
-    const updateCategoryAmountSpent = async (categoryId, amount) => {
-        try {
-            const category = categories.find(cat => cat.categoryId === categoryId);
-            if (!category) return;
-
-            const newAmountSpent = category.amountSpent + parseFloat(amount);
-
-            const updatedCategory = {
-                ...category,
-                amountSpent: newAmountSpent
-            };
-
-            await axios.put(`http://localhost:2004/category/${categoryId}`, updatedCategory);
-            await fetchCategories(); // Refresh to get updated amounts
-        } catch (error) {
-            console.error('Error updating category amount spent:', error);
-            toast.error('Failed to update category amount spent');
+    // Generate last 12 months for dropdown
+    const getLastTwelveMonths = () => {
+        const months = [];
+        for (let i = 0; i < 12; i++) {
+            const date = new Date();
+            date.setMonth(date.getMonth() - i);
+            const monthStr = date.toISOString().slice(0, 7);
+            months.push(monthStr);
         }
+        return months;
     };
 
     if (loading) {
@@ -152,6 +154,17 @@ const Category = () => {
                     <div className="category-header">
                         <h2>Categories</h2>
                         <p>Manage your expense categories</p>
+                        <select 
+                            value={selectedMonth}
+                            onChange={(e) => setSelectedMonth(e.target.value)}
+                            className="month-selector"
+                        >
+                            {getLastTwelveMonths().map(month => (
+                                <option key={month} value={month}>
+                                    {new Date(month + '-01').toLocaleString('default', { month: 'long', year: 'numeric' })}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="category-form">

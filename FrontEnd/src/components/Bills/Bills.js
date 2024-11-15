@@ -283,6 +283,7 @@ const Bills = () => {
                         <div className="modal-content">
                             <h3>Add New Bill</h3>
                             <form onSubmit={handleAddBill}>
+                                <label>Bill Name</label>
                                 <input
                                     type="text"
                                     placeholder="Bill Name"
@@ -290,6 +291,7 @@ const Bills = () => {
                                     onChange={(e) => setBillFormData({...billFormData, billName: e.target.value})}
                                     required
                                 />
+                                <label>Amount</label>
                                 <input
                                     type="number"
                                     placeholder="Amount"
@@ -297,6 +299,7 @@ const Bills = () => {
                                     onChange={(e) => setBillFormData({...billFormData, amount: e.target.value})}
                                     required
                                 />
+                                <label>Due Date</label>
                                 <input
                                     type="date"
                                     value={billFormData.dueDate}

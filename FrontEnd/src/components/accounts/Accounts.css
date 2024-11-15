@@ -28,6 +28,8 @@
     -webkit-text-fill-color: transparent;
     font-weight: 700;
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .accounts-header h2::after {
@@ -43,6 +45,30 @@
 
 .accounts-header h2:hover::after {
     width: 100%;
+}
+
+.accounts-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-left: 2rem;
+}
+
+.tab-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    background: transparent;
+    color: #6b7280;
+}
+
+.tab-btn.active {
+    background: linear-gradient(45deg, #4f46e5, #6366f1);
+    color: white;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
 }
 
 .add-account-btn {

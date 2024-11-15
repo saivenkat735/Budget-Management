@@ -8,8 +8,9 @@ const Accounts = () => {
     const [accounts, setAccounts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
-    const [modalMode, setModalMode] = useState('create'); // 'create' or 'edit'
+    const [modalMode, setModalMode] = useState('create');
     const [selectedAccount, setSelectedAccount] = useState(null);
+    const [activeTab, setActiveTab] = useState('active'); // New state for tab selection
     const [formData, setFormData] = useState({
         accountName: '',
         cardType: '',
@@ -139,6 +140,10 @@ const Accounts = () => {
         );
     }
 
+    const filteredAccounts = accounts.filter(account => 
+        activeTab === 'active' ? account.active : !account.active
+    );
+
     return (
         <div className="dashboard-layout">
             <Sidebar />
@@ -151,9 +156,24 @@ const Accounts = () => {
                         </button>
                     </div>
 
+                    <div className="accounts-tabs">
+                        <button 
+                            className={`tab-btn ${activeTab === 'active' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('active')}
+                        >
+                            Active Accounts
+                        </button>
+                        <button 
+                            className={`tab-btn ${activeTab === 'inactive' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('inactive')}
+                        >
+                            Deactivated Accounts
+                        </button>
+                    </div>
+
                     <div className="accounts-grid">
-                        {accounts.map(account => (
-                            <div key={account.accountId} className="account-card">
+                        {filteredAccounts.map(account => (
+                            <div key={account.accountId} className={`account-card ${!account.active ? 'inactive' : ''}`}>
                                 <div className="account-header">
                                     <span className="account-name">{account.accountName}</span>
                                     <span className="account-type">{account.cardType}</span>
@@ -201,8 +221,8 @@ const Accounts = () => {
                                         >
                                             <option value="">Select Type</option>
                                             <option value="SAVINGS">Savings</option>
-                                            <option value="CHECKING">Checking</option>
-                                            <option value="CREDIT">Credit</option>
+                                            <option value="SALARY">Salary</option>
+                                            <option value="CURRENT">Current</option>
                                         </select>
                                     </div>
 
