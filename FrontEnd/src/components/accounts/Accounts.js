@@ -197,10 +197,10 @@ const Accounts = () => {
 
                     {showModal && (
                         <div className="modal">
-                            <div className="modal-content" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                            <div className="modal-content" style={{ height: 'auto', maxHeight: '90vh', padding: '20px' }}>
                                 <h3>{modalMode === 'create' ? 'Create New Account' : 'Edit Account'}</h3>
-                                <form onSubmit={modalMode === 'create' ? handleCreateAccount : handleEditAccount} style={{ display: 'flex', flexDirection: 'column', gap: '15px', flex: 1, justifyContent: 'center' }}>
-                                    <div className="form-group" style={{ marginBottom: '15px' }}>
+                                <form onSubmit={modalMode === 'create' ? handleCreateAccount : handleEditAccount} style={{ display: 'grid', gap: '15px', marginTop: '20px' }}>
+                                    <div className="form-group">
                                         <label>Account Name</label>
                                         <input
                                             type="text"
@@ -211,7 +211,7 @@ const Accounts = () => {
                                         />
                                     </div>
 
-                                    <div className="form-group" style={{ marginBottom: '15px' }}>
+                                    <div className="form-group">
                                         <label>Account Type</label>
                                         <select
                                             value={formData.cardType.toUpperCase()}
@@ -226,7 +226,7 @@ const Accounts = () => {
                                         </select>
                                     </div>
 
-                                    <div className="form-group" style={{ marginBottom: '15px' }}>
+                                    <div className="form-group">
                                         <label>Balance</label>
                                         <input
                                             type="number"
@@ -236,7 +236,7 @@ const Accounts = () => {
                                         />
                                     </div>
 
-                                    <div className="modal-actions" style={{ marginTop: 'auto' }}>
+                                    <div className="modal-actions" style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                                         <button type="submit" className="confirm-btn">
                                             {modalMode === 'create' ? 'Create Account' : 'Update Account'}
                                         </button>
