@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
 import { toast } from 'react-toastify';
-import { FaWallet, FaMoneyBill, FaChartLine } from 'react-icons/fa';
+import { FaWallet, FaMoneyBill, FaChartLine, FaBell } from 'react-icons/fa';
 import './Dashboard.css';
 import Sidebar from './Sidebar';
 import axios from 'axios';
@@ -22,6 +22,7 @@ const Dashboard = () => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showNotifications, setShowNotifications] = useState(false);
 
     useEffect(() => {
         const initializeDashboard = async () => {
@@ -46,6 +47,31 @@ const Dashboard = () => {
 
         initializeDashboard();
     }, []);
+
+    const getUrgentBillNotifications = () => {
+        const today = new Date();
+        return dashboardData.upcomingBills
+            .filter(bill => !bill.isPaid)
+            .map(bill => {
+                const dueDate = new Date(bill.dueDate);
+                const daysUntil = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                
+                if (daysUntil <= 2) {
+                    let message = '';
+                    if (daysUntil === 0) {
+                        message = `${bill.billName} is due today! Amount: ₹${parseFloat(bill.amount).toLocaleString()}`;
+                    } else if (daysUntil === 1) {
+                        message = `${bill.billName} is due tomorrow! Amount: ₹${parseFloat(bill.amount).toLocaleString()}`;
+                    } else {
+                        message = `${bill.billName} is due in 2 days! Amount: ₹${parseFloat(bill.amount).toLocaleString()}`;
+                    }
+                    return { message, daysUntil, amount: bill.amount };
+                }
+                return null;
+            })
+            .filter(notification => notification !== null)
+            .sort((a, b) => a.daysUntil - b.daysUntil);
+    };
 
     const fetchDashboardData = async (personId) => {
         try {
@@ -153,6 +179,95 @@ const Dashboard = () => {
                     <div className="dashboard-container">
                         <div className="dashboard-header">
                             <h2>Welcome back, {localStorage.getItem('username')}!</h2>
+                            <div className="notification-area" style={{ position: 'relative' }}>
+                                <div 
+                                    className="notification-bell"
+                                    onClick={() => setShowNotifications(!showNotifications)}
+                                    style={{ 
+                                        position: 'relative',
+                                        color: '#4F46E5',
+                                        cursor: 'pointer',
+                                        padding: '8px',
+                                        borderRadius: '50%',
+                                        transition: 'all 0.3s ease',
+                                        background: showNotifications ? 'rgba(79, 70, 229, 0.1)' : 'transparent',
+                                        transform: showNotifications ? 'scale(1.1)' : 'scale(1)',
+                                        boxShadow: showNotifications ? '0 0 10px rgba(79, 70, 229, 0.3)' : 'none',
+                                        float: 'right'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.background = 'rgba(79, 70, 229, 0.1)';
+                                        e.currentTarget.style.transform = 'scale(1.1)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (!showNotifications) {
+                                            e.currentTarget.style.background = 'transparent';
+                                            e.currentTarget.style.transform = 'scale(1)';
+                                        }
+                                    }}
+                                >
+                                    <FaBell size={20} />
+                                    <span 
+                                        style={{
+                                            position: 'absolute',
+                                            top: '0',
+                                            right: '0',
+                                            background: '#EF4444',
+                                            color: 'white',
+                                            borderRadius: '50%',
+                                            width: '20px',
+                                            height: '20px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '12px',
+                                            fontWeight: 'bold',
+                                            border: '2px solid white',
+                                            animation: 'pulse 2s infinite'
+                                        }}
+                                    >
+                                        1
+                                    </span>
+                                </div>
+                                {showNotifications && (
+                                    <div className="notification-dropdown" style={{
+                                        position: 'absolute',
+                                        top: '40px',
+                                        right: '0',
+                                        background: 'white',
+                                        borderRadius: '12px',
+                                        boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                                        padding: '12px',
+                                        minWidth: '280px',
+                                        zIndex: 1000,
+                                        animation: 'slideDown 0.3s ease-out'
+                                    }}>
+                                        {getUrgentBillNotifications().length > 0 ? (
+                                            getUrgentBillNotifications().map((notification, index) => (
+                                                <div key={index} className="notification-item" style={{
+                                                    padding: '12px',
+                                                    borderBottom: '1px solid #f1f5f9',
+                                                    cursor: 'pointer',
+                                                    transition: 'background 0.2s',
+                                                    ':hover': {
+                                                        background: '#f8fafc'
+                                                    }
+                                                }}>
+                                                    {notification.message}
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="notification-item" style={{
+                                                padding: '12px',
+                                                color: '#64748b',
+                                                textAlign: 'center'
+                                            }}>
+                                                No urgent bills due
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                             <p>Here's your financial snapshot</p>
                         </div>
 
