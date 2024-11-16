@@ -353,25 +353,71 @@ const FinancialReports = () => {
                             <h3>Income vs Expenses</h3>
                             <div className="chart-container">
                                 <Bar 
-                                    data={reportData.incomeVsExpense}
+                                    data={{
+                                        ...reportData.incomeVsExpense,
+                                        datasets: [
+                                            {
+                                                ...reportData.incomeVsExpense.datasets[0],
+                                                backgroundColor: 'rgba(52, 211, 153, 0.4)',
+                                                borderColor: 'rgb(52, 211, 153)',
+                                                borderWidth: 2,
+                                                hoverBackgroundColor: 'rgba(52, 211, 153, 0.6)'
+                                            },
+                                            {
+                                                ...reportData.incomeVsExpense.datasets[1],
+                                                backgroundColor: 'rgba(239, 68, 68, 0.4)',
+                                                borderColor: 'rgb(239, 68, 68)',
+                                                borderWidth: 2,
+                                                hoverBackgroundColor: 'rgba(239, 68, 68, 0.6)'
+                                            }
+                                        ]
+                                    }}
                                     options={{
                                         responsive: true,
                                         maintainAspectRatio: false,
+                                        animation: {
+                                            duration: 1000,
+                                            easing: 'easeInOutQuart'
+                                        },
                                         scales: {
                                             y: {
                                                 beginAtZero: true,
+                                                grid: {
+                                                    color: 'rgba(156, 163, 175, 0.1)'
+                                                },
                                                 ticks: {
                                                     callback: function(value) {
-                                                        return '₹' + value;
+                                                        return '₹' + value.toLocaleString();
+                                                    },
+                                                    font: {
+                                                        weight: '500'
                                                     }
+                                                }
+                                            },
+                                            x: {
+                                                grid: {
+                                                    display: false
                                                 }
                                             }
                                         },
                                         plugins: {
+                                            legend: {
+                                                labels: {
+                                                    font: {
+                                                        weight: '600'
+                                                    }
+                                                }
+                                            },
                                             tooltip: {
+                                                backgroundColor: 'rgba(17, 24, 39, 0.8)',
+                                                padding: 12,
+                                                titleFont: {
+                                                    size: 14,
+                                                    weight: '600'
+                                                },
                                                 callbacks: {
                                                     label: function(context) {
-                                                        return context.dataset.label + ': ₹' + context.raw;
+                                                        return context.dataset.label + ': ₹' + context.raw.toLocaleString();
                                                     }
                                                 }
                                             }
@@ -385,10 +431,50 @@ const FinancialReports = () => {
                             <h3>Category-wise Spending</h3>
                             <div className="chart-container">
                                 <Doughnut 
-                                    data={reportData.categoryWiseSpending}
+                                    data={{
+                                        ...reportData.categoryWiseSpending,
+                                        datasets: [{
+                                            ...reportData.categoryWiseSpending.datasets[0],
+                                            backgroundColor: [
+                                                'rgba(99, 102, 241, 0.8)',
+                                                'rgba(244, 63, 94, 0.8)', 
+                                                'rgba(34, 197, 94, 0.8)',
+                                                'rgba(234, 179, 8, 0.8)',
+                                                'rgba(168, 85, 247, 0.8)',
+                                                'rgba(14, 165, 233, 0.8)'
+                                            ],
+                                            borderColor: 'white',
+                                            borderWidth: 2,
+                                            hoverOffset: 4
+                                        }]
+                                    }}
                                     options={{
                                         responsive: true,
-                                        maintainAspectRatio: false
+                                        maintainAspectRatio: false,
+                                        animation: {
+                                            animateRotate: true,
+                                            animateScale: true
+                                        },
+                                        plugins: {
+                                            legend: {
+                                                position: 'right',
+                                                labels: {
+                                                    font: {
+                                                        size: 12,
+                                                        weight: '500'
+                                                    },
+                                                    padding: 15
+                                                }
+                                            },
+                                            tooltip: {
+                                                backgroundColor: 'rgba(17, 24, 39, 0.8)',
+                                                padding: 12,
+                                                titleFont: {
+                                                    size: 14,
+                                                    weight: '600'
+                                                }
+                                            }
+                                        }
                                     }}
                                 />
                             </div>
@@ -398,18 +484,56 @@ const FinancialReports = () => {
                             <h3>Savings Rate</h3>
                             <div className="chart-container">
                                 <Line 
-                                    data={reportData.savingsRate}
+                                    data={{
+                                        ...reportData.savingsRate,
+                                        datasets: [{
+                                            ...reportData.savingsRate.datasets[0],
+                                            borderColor: 'rgb(99, 102, 241)',
+                                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                                            borderWidth: 3,
+                                            fill: true,
+                                            tension: 0.4
+                                        }]
+                                    }}
                                     options={{
                                         responsive: true,
                                         maintainAspectRatio: false,
+                                        animation: {
+                                            duration: 1000,
+                                            easing: 'easeInOutQuart'
+                                        },
                                         scales: {
                                             y: {
                                                 beginAtZero: true,
                                                 max: 100,
+                                                grid: {
+                                                    color: 'rgba(156, 163, 175, 0.1)'
+                                                },
                                                 ticks: {
                                                     callback: function(value) {
                                                         return value + '%';
+                                                    },
+                                                    font: {
+                                                        weight: '500'
                                                     }
+                                                }
+                                            },
+                                            x: {
+                                                grid: {
+                                                    display: false
+                                                }
+                                            }
+                                        },
+                                        plugins: {
+                                            legend: {
+                                                display: false
+                                            },
+                                            tooltip: {
+                                                backgroundColor: 'rgba(17, 24, 39, 0.8)',
+                                                padding: 12,
+                                                titleFont: {
+                                                    size: 14,
+                                                    weight: '600'
                                                 }
                                             }
                                         }
@@ -422,25 +546,59 @@ const FinancialReports = () => {
                             <h3>Monthly Trends</h3>
                             <div className="chart-container">
                                 <Line 
-                                    data={reportData.monthlyTrends}
+                                    data={{
+                                        ...reportData.monthlyTrends,
+                                        datasets: [{
+                                            ...reportData.monthlyTrends.datasets[0],
+                                            borderColor: 'rgb(234, 179, 8)',
+                                            backgroundColor: 'rgba(234, 179, 8, 0.1)',
+                                            borderWidth: 3,
+                                            fill: true,
+                                            tension: 0.4
+                                        }]
+                                    }}
                                     options={{
                                         responsive: true,
                                         maintainAspectRatio: false,
+                                        animation: {
+                                            duration: 1000,
+                                            easing: 'easeInOutQuart'
+                                        },
                                         scales: {
                                             y: {
                                                 beginAtZero: true,
+                                                grid: {
+                                                    color: 'rgba(156, 163, 175, 0.1)'
+                                                },
                                                 ticks: {
                                                     callback: function(value) {
-                                                        return '₹' + value;
+                                                        return '₹' + value.toLocaleString();
+                                                    },
+                                                    font: {
+                                                        weight: '500'
                                                     }
+                                                }
+                                            },
+                                            x: {
+                                                grid: {
+                                                    display: false
                                                 }
                                             }
                                         },
                                         plugins: {
+                                            legend: {
+                                                display: false
+                                            },
                                             tooltip: {
+                                                backgroundColor: 'rgba(17, 24, 39, 0.8)',
+                                                padding: 12,
+                                                titleFont: {
+                                                    size: 14,
+                                                    weight: '600'
+                                                },
                                                 callbacks: {
                                                     label: function(context) {
-                                                        return 'Spending: ₹' + context.raw;
+                                                        return 'Spending: ₹' + context.raw.toLocaleString();
                                                     }
                                                 }
                                             }
