@@ -365,21 +365,21 @@ tr:hover {
 }
 
 .Toastify__toast--success {
-    background: linear-gradient(45deg, #22c55e, #16a34a) !important;
-    color: white !important;
+    background: #dcfce7 !important;
+    color: #166534 !important;
 }
 
 .Toastify__toast--error {
-    background: linear-gradient(45deg, #ef4444, #dc2626) !important;
-    color: white !important;
+    background: #fee2e2 !important;
+    color: #991b1b !important;
 }
 
 .Toastify__toast--warning {
-    background: linear-gradient(45deg, #f59e0b, #d97706) !important;
-    color: white !important;
+    background: #fef3c7 !important;
+    color: #92400e !important;
 }
 
 .Toastify__toast--info {
-    background: linear-gradient(45deg, #3b82f6, #2563eb) !important;
-    color: white !important;
+    background: #dbeafe !important;
+    color: #1e40af !important;
 }

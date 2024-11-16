@@ -60,7 +60,7 @@ const Dashboard = () => {
             const [accountsResponse, billsResponse, transactionsResponse] = await Promise.all([
                 axios.get(`http://localhost:2001/api/accounts/person/${personId}`),
                 axios.get(`http://localhost:9007/bills/person/${personId}`),
-                api.transactions.get(`http://localhost:2002/TransactionHistory/person/${personId}/recent`)
+                axios.get(`http://localhost:2002/TransactionHistory/person/${personId}`)
             ]);
 
             // Validate the data received
@@ -86,8 +86,13 @@ const Dashboard = () => {
 
             const availableBalance = totalBalance - fixedExpenses;
 
+            // Sort transactions by transactionId in descending order and take top 5
+            const sortedTransactions = transactionsResponse.data
+                .sort((a, b) => b.transactionId - a.transactionId)
+                .slice(0, 5);
+
             // Map transactions with account names
-            const transactionsWithAccounts = transactionsResponse.data.map(transaction => {
+            const transactionsWithAccounts = sortedTransactions.map(transaction => {
                 const account = activeAccounts.find(acc => acc.accountId === transaction.accountId);
                 return {
                     ...transaction,
@@ -238,22 +243,25 @@ const Dashboard = () => {
                             <table className="transactions-table">
                                 <thead>
                                     <tr>
+                                        <th>Transaction ID</th>
                                         <th>Account</th>
                                         <th>Date</th>
-                                        <th>Amount</th>
                                         <th>Type</th>
+                                        <th>Amount</th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {dashboardData.recentTransactions.slice(0, 5).map(transaction => (
+                                    {dashboardData.recentTransactions.map(transaction => (
                                         <tr key={transaction.transactionId}>
+                                            <td>{transaction.transactionId}</td>
                                             <td>{transaction.accountName}</td>
                                             <td>{new Date(transaction.date).toLocaleDateString()}</td>
-                                            <td className={transaction.transactionType.toLowerCase()}>
-                                                {transaction.transactionType === 'CREDIT' ? '+' : '-'}
-                                                ₹{parseFloat(transaction.amount).toLocaleString()}
-                                            </td>
                                             <td>{transaction.transactionType}</td>
+                                            <td className={`transaction-amount ${transaction.transactionType === 'CREDIT' ? 'credit' : 'debit'}`}>
+                                                {transaction.transactionType === 'CREDIT' ? '+' : '-'}₹{transaction.amount.toLocaleString()}
+                                            </td>
+                                            <td>{transaction.categoryId ? dashboardData.categories?.find(cat => cat.categoryId === transaction.categoryId)?.categoryName : 'N/A'}</td>
                                         </tr>
                                     ))}
                                 </tbody>

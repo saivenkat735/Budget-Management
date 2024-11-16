@@ -177,15 +177,30 @@ const Bills = () => {
             const transactionResponse = await axios.post('http://localhost:2002/TransactionHistory/transaction', transactionData);
 
             if (transactionResponse.status === 200) {
-                const updatedBill = { ...bill, isPaid: true };
+                // Calculate next month's due date
+                const currentDueDate = new Date(bill.dueDate);
+                const nextMonthDueDate = new Date(currentDueDate.setMonth(currentDueDate.getMonth() + 1));
                 
-                const billUpdateResponse = await axios.get(
-                    `http://localhost:9007/bills/${bill.billId}/paid`);
+                const updatedBill = { 
+                    ...bill, 
+                    isPaid: true,
+                    dueDate: nextMonthDueDate.toISOString()
+                };
+                
+                // Update bill with next month's due date
+                const billUpdateResponse = await axios.put(`http://localhost:9007/bills/update/${bill.billId}`, {
+                    ...updatedBill,
+                    accountId: personId
+                });
 
                 if (billUpdateResponse.status === 200) {
                     setBills(prevBills => 
                         prevBills.map(b => 
-                            b.billId === bill.billId ? {...b, isPaid: true} : b
+                            b.billId === bill.billId ? {
+                                ...b, 
+                                isPaid: false, // Reset paid status for next month
+                                dueDate: nextMonthDueDate.toISOString()
+                            } : b
                         )
                     );
                     
@@ -206,6 +221,11 @@ const Bills = () => {
             amount: '',
             dueDate: new Date().toISOString().split('T')[0]
         });
+    };
+
+    const handleCancel = () => {
+        resetBillForm();
+        setShowBillModal(false);
     };
 
     if (loading) {
@@ -314,7 +334,7 @@ const Bills = () => {
                                 </div>
                                 <div className="modal-buttons" style={{ marginTop: 'auto' }}>
                                     <button type="submit">Add Bill</button>
-                                    <button type="button" onClick={() => setShowBillModal(false)}>Cancel</button>
+                                    <button type="button" onClick={handleCancel}>Cancel</button>
                                 </div>
                             </form>
                         </div>

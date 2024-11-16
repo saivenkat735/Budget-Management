@@ -10,6 +10,7 @@ const Transaction = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showTransactionModal, setShowTransactionModal] = useState(false);
+    const [insufficientFunds, setInsufficientFunds] = useState(false);
     const [transactionFormData, setTransactionFormData] = useState({
         accountId: '',
         amount: '',
@@ -23,6 +24,20 @@ const Transaction = () => {
     useEffect(() => {
         Promise.all([fetchTransactions(), fetchAccounts(), fetchCategories()]);
     }, []);
+
+    useEffect(() => {
+        // Check for insufficient funds whenever amount, account, or type changes
+        if (transactionFormData.accountId && transactionFormData.amount && transactionFormData.type === 'DEBIT') {
+            const selectedAccount = accounts.find(acc => acc.accountId === Number(transactionFormData.accountId));
+            if (selectedAccount && Number(transactionFormData.amount) > selectedAccount.balance) {
+                setInsufficientFunds(true);
+            } else {
+                setInsufficientFunds(false);
+            }
+        } else {
+            setInsufficientFunds(false);
+        }
+    }, [transactionFormData.accountId, transactionFormData.amount, transactionFormData.type, accounts]);
 
     const fetchCategories = async () => {
         try {
@@ -101,6 +116,12 @@ const Transaction = () => {
             const accountExists = accounts.find(acc => acc.accountId === selectedAccountId);
             if (!accountExists) {
                 toast.error('Invalid Account ID. Please select a valid account.');
+                return;
+            }
+
+            // Check for insufficient funds before proceeding
+            if (insufficientFunds) {
+                toast.error('Insufficient funds in the selected account');
                 return;
             }
 
@@ -208,6 +229,7 @@ const Transaction = () => {
             categoryId: '',
             categoryName: ''
         });
+        setInsufficientFunds(false);
     };
 
     if (loading) {
@@ -275,6 +297,38 @@ const Transaction = () => {
                         <div className="modal">
                             <div className="modal-content" style={{ width: '600px', height: 'auto', padding: '20px' }}>
                                 <h3>Add New Transaction</h3>
+                                {insufficientFunds && (
+                                    <div style={{
+                                        color: '#dc2626',
+                                        background: 'linear-gradient(135deg, #fee2e2, #fecaca)',
+                                        padding: '16px',
+                                        borderRadius: '12px',
+                                        marginBottom: '20px',
+                                        textAlign: 'center',
+                                        fontWeight: '600',
+                                        fontSize: '1.1rem',
+                                        border: '2px solid #fca5a5',
+                                        boxShadow: '0 4px 12px rgba(220, 38, 38, 0.15)',
+                                        transform: 'translateY(0)',
+                                        transition: 'all 0.3s ease',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '8px'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(220, 38, 38, 0.2)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.15)';
+                                    }}>
+                                        <span style={{fontSize: '1.5rem'}}>⚠️</span>
+                                        Insufficient Funds
+                                    </div>
+                                )}
                                 <form onSubmit={handleTransaction} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
                                     <div className="form-group">
                                         <label>Account</label>
@@ -370,7 +424,10 @@ const Transaction = () => {
                                     </div>
                                     <div className="modal-actions" style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center', gap: '10px' }}>
                                         <button type="submit">Submit</button>
-                                        <button type="button" onClick={() => setShowTransactionModal(false)}>Cancel</button>
+                                        <button type="button" onClick={() => {
+                                            resetTransactionForm();
+                                            setShowTransactionModal(false);
+                                        }}>Cancel</button>
                                     </div>
                                 </form>
                             </div>
