@@ -54,6 +54,7 @@ const Login = ({ isRegister = false }) => {
                 });
                 const decoded = jwtDecode(response.data.token);
                 localStorage.setItem("personId", decoded.username);
+                localStorage.setItem("username", formData.username);
 
                 if (response.data.token) {
                     login(response.data.token);

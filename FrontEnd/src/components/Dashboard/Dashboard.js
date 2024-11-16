@@ -152,7 +152,7 @@ const Dashboard = () => {
                 ) : (
                     <div className="dashboard-container">
                         <div className="dashboard-header">
-                            <h2>Welcome back, {dashboardData.userName}!</h2>
+                            <h2>Welcome back, {localStorage.getItem('username')}!</h2>
                             <p>Here's your financial snapshot</p>
                         </div>
 
