@@ -266,8 +266,8 @@ const Transaction = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {transactions.map(transaction => (
-                                    <tr key={transaction.id}>
+                                {transactions.map((transaction,index) => (
+                                    <tr key={index}>
                                         <td>{transaction.transactionId}</td>
                                         <td>{accounts.find(acc => acc.accountId === transaction.accountId)?.accountName || 'N/A'}</td>
                                         <td>{new Date(transaction.date).toLocaleDateString()}</td>

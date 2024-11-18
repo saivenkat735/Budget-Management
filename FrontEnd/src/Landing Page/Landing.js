@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaChartLine, FaShieldAlt, FaWallet, FaFileInvoiceDollar, FaHistory } from 'react-icons/fa';
 import './Landing.css';
-import icon from './../icon.png';
+import pic from './../pic.png';
 
 const Landing = () => {
     const navigate = useNavigate();
@@ -12,21 +12,21 @@ const Landing = () => {
             <nav className="landing-nav">
                 <div className="nav-logo" style={{ display: 'flex', alignItems: 'center' }}>
                     <img 
-                        src={icon} 
+                        src={pic} 
                         alt="BudgetWise Logo"
                         className="logo-img"
                         style={{
-                            width: '50px', // Reduced width to be more proportional
-                            height: '50px', // Made height match width for better aspect ratio
-                            marginRight: '12px',
+                            width: '50px',
+                            height: '50px',
+                            marginRight: '6px',
                             transition: 'transform 0.3s ease',
                             cursor: 'pointer',
-                            display: 'block' // Ensures image is visible
+                            display: 'block'
                         }}
                         onMouseOver={(e) => e.target.style.transform = 'scale(1.1) rotate(10deg)'}
                         onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                     />
-                    <h1 style={{ marginLeft: '8px' }}>BudgetWise</h1>
+                    <h1 style={{ marginLeft: '4px' }}>BudgetWise</h1>
                 </div>
                 <div className="nav-links">
                     <button 
@@ -162,11 +162,11 @@ const Landing = () => {
                     <div className="footer-section">
                         <h4>Features</h4>
                         <ul>
-                            <li><a onClick={() => navigate('/accounts')}>Account Management</a></li>
-                            <li><a onClick={() => navigate('/bills')}>Bill Tracking</a></li>
-                            <li><a onClick={() => navigate('/transactions')}>Transaction History</a></li>
-                            <li><a onClick={() => navigate('/analytics')}>Financial Analytics</a></li>
-                            <li><a onClick={() => navigate('/categories')}>Categories</a></li>
+                            <li><a onClick={() => {localStorage.setItem('requestedRoute', '/accounts'); navigate('/login');}}>Account Management</a></li>
+                            <li><a onClick={() => {localStorage.setItem('requestedRoute', '/bills'); navigate('/login');}}>Bill Tracking</a></li>
+                            <li><a onClick={() => {localStorage.setItem('requestedRoute', '/transactions'); navigate('/login');}}>Transaction History</a></li>
+                            <li><a onClick={() => {localStorage.setItem('requestedRoute', '/reports'); navigate('/login');}}>Financial Analytics</a></li>
+                            <li><a onClick={() => {localStorage.setItem('requestedRoute', '/categories'); navigate('/categories');}}>Categories</a></li>
                         </ul>
                     </div>
                     <div className="footer-section">

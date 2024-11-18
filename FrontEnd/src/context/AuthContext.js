@@ -29,7 +29,13 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('authToken', token);
         const decoded = jwtDecode(token);
         setUser(decoded);
-        navigate('/dashboard');
+        const requestedRoute = localStorage.getItem('requestedRoute');
+        if (requestedRoute) {
+            navigate(requestedRoute);
+            localStorage.removeItem('requestedRoute');
+        } else {
+            navigate('/dashboard');
+        }
     };
 
     const logout = () => {
