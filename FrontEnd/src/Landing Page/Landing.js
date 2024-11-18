@@ -146,10 +146,11 @@ const Landing = () => {
                     <div className="footer-section">
                         <h4>Features</h4>
                         <ul>
-                            <li>Account Management</li>
-                            <li>Bill Tracking</li>
-                            <li>Transaction History</li>
-                            <li>Financial Analytics</li>
+                            <li><a onClick={() => navigate('/accounts')}>Account Management</a></li>
+                            <li><a onClick={() => navigate('/bills')}>Bill Tracking</a></li>
+                            <li><a onClick={() => navigate('/transactions')}>Transaction History</a></li>
+                            <li><a onClick={() => navigate('/analytics')}>Financial Analytics</a></li>
+                            <li><a onClick={() => navigate('/categories')}>Categories</a></li>
                         </ul>
                     </div>
                     <div className="footer-section">
