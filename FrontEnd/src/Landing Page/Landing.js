@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaChartLine, FaShieldAlt, FaWallet, FaFileInvoiceDollar, FaHistory } from 'react-icons/fa';
 import './Landing.css';
+import icon from './../icon.png';
 
 const Landing = () => {
     const navigate = useNavigate();
@@ -9,8 +10,23 @@ const Landing = () => {
     return (
         <div className="landing-container">
             <nav className="landing-nav">
-                <div className="nav-logo">
-                    <h1>BudgetWise</h1>
+                <div className="nav-logo" style={{ display: 'flex', alignItems: 'center' }}>
+                    <img 
+                        src={icon} 
+                        alt="BudgetWise Logo"
+                        className="logo-img"
+                        style={{
+                            width: '50px', // Reduced width to be more proportional
+                            height: '50px', // Made height match width for better aspect ratio
+                            marginRight: '12px',
+                            transition: 'transform 0.3s ease',
+                            cursor: 'pointer',
+                            display: 'block' // Ensures image is visible
+                        }}
+                        onMouseOver={(e) => e.target.style.transform = 'scale(1.1) rotate(10deg)'}
+                        onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                    />
+                    <h1 style={{ marginLeft: '8px' }}>BudgetWise</h1>
                 </div>
                 <div className="nav-links">
                     <button 

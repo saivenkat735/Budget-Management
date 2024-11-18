@@ -14,6 +14,8 @@ import {
 } from 'react-icons/fa';
 import './Sidebar.css';
 import { useAuth } from '../../context/AuthContext';
+import icon from '../../icon.png';
+
 
 const Sidebar = () => {
     const location = useLocation();
@@ -33,8 +35,23 @@ const Sidebar = () => {
 
     return (
         <div className="sidebar">
-            <div className="sidebar-header">
-                <h2>BudgetWise</h2>
+            <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center' }}>
+                <img 
+                    src={icon} 
+                    alt="BudgetWise Logo"
+                    className="logo-img"
+                    style={{
+                        width: '50px',
+                        height: '50px',
+                        marginRight: '12px',
+                        transition: 'transform 0.3s ease',
+                        cursor: 'pointer',
+                        display: 'block'
+                    }}
+                    onMouseOver={(e) => e.target.style.transform = 'scale(1.1) rotate(10deg)'}
+                    onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                />
+                <h2 style={{ marginLeft: '8px' }}>BudgetWise</h2>
             </div>
             <nav className="sidebar-nav">
                 {/* Back button for Accounts page */}
