@@ -14,7 +14,6 @@ const Transaction = () => {
     const [transactionFormData, setTransactionFormData] = useState({
         accountId: '',
         amount: '',
-        description: '',
         type: 'CREDIT',
         date: new Date().toISOString().split('T')[0],
         categoryId: '',
@@ -164,7 +163,6 @@ const Transaction = () => {
             const transactionData = {
                 accountId: selectedAccountId,
                 amount: amount,
-                description: transactionFormData.description,
                 transactionType: transactionFormData.type,
                 date: transactionFormData.date,
                 personId: personId,
@@ -223,7 +221,6 @@ const Transaction = () => {
         setTransactionFormData({
             accountId: '',
             amount: '',
-            description: '',
             type: 'CREDIT',
             date: new Date().toISOString().split('T')[0],
             categoryId: '',
@@ -397,18 +394,6 @@ const Transaction = () => {
                                             <option value="CREDIT">Credit</option>
                                             <option value="DEBIT">Debit</option>
                                         </select>
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Description</label>
-                                        <input
-                                            type="text"
-                                            value={transactionFormData.description}
-                                            onChange={(e) => setTransactionFormData({
-                                                ...transactionFormData,
-                                                description: e.target.value
-                                            })}
-                                            required
-                                        />
                                     </div>
                                     <div className="form-group">
                                         <label>Date</label>

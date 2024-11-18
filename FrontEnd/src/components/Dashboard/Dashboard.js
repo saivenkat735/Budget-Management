@@ -207,27 +207,29 @@ const Dashboard = () => {
                                     }}
                                 >
                                     <FaBell size={20} />
-                                    <span 
-                                        style={{
-                                            position: 'absolute',
-                                            top: '0',
-                                            right: '0',
-                                            background: '#EF4444',
-                                            color: 'white',
-                                            borderRadius: '50%',
-                                            width: '20px',
-                                            height: '20px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            fontSize: '12px',
-                                            fontWeight: 'bold',
-                                            border: '2px solid white',
-                                            animation: 'pulse 2s infinite'
-                                        }}
-                                    >
-                                        1
-                                    </span>
+                                    {getUrgentBillNotifications().length > 0 && (
+                                        <span 
+                                            style={{
+                                                position: 'absolute',
+                                                top: '0',
+                                                right: '0',
+                                                background: '#EF4444',
+                                                color: 'white',
+                                                borderRadius: '50%',
+                                                width: '20px',
+                                                height: '20px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                fontSize: '12px',
+                                                fontWeight: 'bold',
+                                                border: '2px solid white',
+                                                animation: 'pulse 2s infinite'
+                                            }}
+                                        >
+                                            {getUrgentBillNotifications().length}
+                                        </span>
+                                    )}
                                 </div>
                                 {showNotifications && (
                                     <div className="notification-dropdown" style={{
