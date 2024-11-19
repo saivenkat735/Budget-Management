@@ -8,6 +8,10 @@ const Bills = () => {
     const [bills, setBills] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showBillModal, setShowBillModal] = useState(false);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [selectedBill, setSelectedBill] = useState(null);
+    const [accounts, setAccounts] = useState([]);
+    const [selectedAccount, setSelectedAccount] = useState('');
     const [billFormData, setBillFormData] = useState({
         billName: '',
         amount: '',
@@ -20,7 +24,20 @@ const Bills = () => {
     useEffect(() => {
         fetchBills();
         fetchCategories();
+        fetchAccounts();
     }, []);
+
+    const fetchAccounts = async () => {
+        try {
+            const personId = localStorage.getItem('personId');
+            const response = await axios.get(`http://localhost:2001/api/accounts/person/${personId}`);
+            const activeAccounts = response.data.filter(acc => acc.active);
+            setAccounts(activeAccounts);
+        } catch (error) {
+            console.error('Error fetching accounts:', error);
+            toast.error('Failed to load accounts');
+        }
+    };
 
     const fetchCategories = async () => {
         try {
@@ -135,20 +152,21 @@ const Bills = () => {
         }
     };
 
-    const handlePayBill = async (bill) => {
+    const initiatePayment = (bill) => {
+        setSelectedBill(bill);
+        setShowPaymentModal(true);
+    };
+
+    const handlePayBill = async () => {
+        if (!selectedAccount) {
+            toast.error('Please select an account for payment');
+            return;
+        }
+
         try {
             setProcessingPayment(true);
             const personId = localStorage.getItem('personId');
             
-            // Get default account for payment
-            const accountResponse = await axios.get(`http://localhost:2001/api/accounts/person/${personId}`);
-            const defaultAccount = accountResponse.data.find(acc => acc.active);
-            
-            if (!defaultAccount) {
-                toast.error('No active account found for payment');
-                return;
-            }
-
             // Find or create "Bill" category
             let billCategory = categories.find(cat => cat.categoryName === "Bill");
             if (!billCategory) {
@@ -164,31 +182,31 @@ const Bills = () => {
             }
 
             const transactionData = {
-                accountId: defaultAccount.accountId,
-                amount: bill.amount,
-                description: `Bill Payment - ${bill.billName}`,
+                accountId: selectedAccount,
+                amount: selectedBill.amount,
+                description: `Bill Payment - ${selectedBill.billName}`,
                 transactionType: 'DEBIT',
                 date: new Date().toISOString(),
                 personId: personId,
                 categoryId: billCategory.categoryId
             };
 
-            // First create the transaction
+            // Create the transaction
             const transactionResponse = await axios.post('http://localhost:2002/TransactionHistory/transaction', transactionData);
 
             if (transactionResponse.status === 200) {
                 // Calculate next month's due date
-                const currentDueDate = new Date(bill.dueDate);
+                const currentDueDate = new Date(selectedBill.dueDate);
                 const nextMonthDueDate = new Date(currentDueDate.setMonth(currentDueDate.getMonth() + 1));
                 
                 const updatedBill = { 
-                    ...bill, 
+                    ...selectedBill, 
                     isPaid: true,
                     dueDate: nextMonthDueDate.toISOString()
                 };
                 
                 // Update bill with next month's due date
-                const billUpdateResponse = await axios.put(`http://localhost:9007/bills/update/${bill.billId}`, {
+                const billUpdateResponse = await axios.put(`http://localhost:9007/bills/update/${selectedBill.billId}`, {
                     ...updatedBill,
                     accountId: personId
                 });
@@ -196,15 +214,18 @@ const Bills = () => {
                 if (billUpdateResponse.status === 200) {
                     setBills(prevBills => 
                         prevBills.map(b => 
-                            b.billId === bill.billId ? {
+                            b.billId === selectedBill.billId ? {
                                 ...b, 
-                                isPaid: false, // Reset paid status for next month
+                                isPaid: false,
                                 dueDate: nextMonthDueDate.toISOString()
                             } : b
                         )
                     );
                     
-                    toast.success(`Payment of ₹${bill.amount} processed for ${bill.billName}`);
+                    toast.success(`Payment of ₹${selectedBill.amount} processed for ${selectedBill.billName}`);
+                    setShowPaymentModal(false);
+                    setSelectedBill(null);
+                    setSelectedAccount('');
                 }
             }
         } catch (error) {
@@ -272,7 +293,7 @@ const Bills = () => {
                                         <td>
                                             <button 
                                                 className="pay-btn"
-                                                onClick={() => handlePayBill(bill)}
+                                                onClick={() => initiatePayment(bill)}
                                                 disabled={bill.isPaid || processingPayment}
                                             >
                                                 {bill.isPaid ? 'Paid' : processingPayment ? 'Processing...' : 'Pay'}
@@ -337,6 +358,137 @@ const Bills = () => {
                                     <button type="button" onClick={handleCancel}>Cancel</button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                )}
+
+                {/* Payment Modal */}
+                {showPaymentModal && (
+                    <div className="modal">
+                        <div className="modal-content" style={{
+                            minHeight: '400px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            background: 'white',
+                            borderRadius: '20px',
+                            padding: '32px',
+                            boxShadow: '0 8px 32px rgba(0,0,0,0.12)'
+                        }}>
+                            <h3 style={{
+                                fontSize: '24px',
+                                background: 'linear-gradient(45deg, #4f46e5, #6366f1)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                marginBottom: '24px',
+                                textAlign: 'center'
+                            }}>Select Payment Account</h3>
+
+                            <div style={{ 
+                                flex: 1,
+                                padding: '24px',
+                                background: '#f8fafc',
+                                borderRadius: '12px',
+                                marginBottom: '24px'
+                            }}>
+                                <div style={{
+                                    padding: '16px',
+                                    background: 'white',
+                                    borderRadius: '8px',
+                                    marginBottom: '20px',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                                }}>
+                                    <p style={{ 
+                                        fontSize: '18px',
+                                        fontWeight: '600',
+                                        color: '#1e293b',
+                                        marginBottom: '8px'
+                                    }}>Bill: {selectedBill.billName}</p>
+                                    <p style={{
+                                        fontSize: '24px',
+                                        fontWeight: '700',
+                                        color: '#4f46e5'
+                                    }}>Amount: ₹{selectedBill.amount.toLocaleString()}</p>
+                                </div>
+
+                                <div className="form-group" style={{ marginTop: '20px' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '8px',
+                                        color: '#475569',
+                                        fontWeight: '500'
+                                    }}>Select Account</label>
+                                    <select
+                                        value={selectedAccount}
+                                        onChange={(e) => setSelectedAccount(e.target.value)}
+                                        required
+                                        style={{
+                                            width: '100%',
+                                            padding: '12px',
+                                            borderRadius: '8px',
+                                            border: '2px solid #e2e8f0',
+                                            fontSize: '16px',
+                                            transition: 'all 0.3s ease',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <option value="">Choose an account</option>
+                                        {accounts.map(account => (
+                                            <option key={account.accountId} value={account.accountId}>
+                                                {account.accountName} (Balance: ₹{parseFloat(account.balance).toLocaleString()})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="modal-buttons" style={{
+                                display: 'flex',
+                                gap: '16px',
+                                justifyContent: 'center'
+                            }}>
+                                <button 
+                                    onClick={handlePayBill}
+                                    disabled={!selectedAccount || processingPayment}
+                                    style={{
+                                        padding: '12px 24px',
+                                        background: !selectedAccount || processingPayment ? '#94a3b8' : '#4f46e5',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        cursor: !selectedAccount || processingPayment ? 'not-allowed' : 'pointer',
+                                        transition: 'all 0.3s ease',
+                                        transform: 'scale(1)',
+                                        ':hover': {
+                                            transform: 'scale(1.05)'
+                                        }
+                                    }}
+                                >
+                                    {processingPayment ? 'Processing...' : 'Confirm Payment'}
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        setShowPaymentModal(false);
+                                        setSelectedBill(null);
+                                        setSelectedAccount('');
+                                    }}
+                                    style={{
+                                        padding: '12px 24px',
+                                        background: 'white',
+                                        color: '#4f46e5',
+                                        border: '2px solid #4f46e5',
+                                        borderRadius: '8px',
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
