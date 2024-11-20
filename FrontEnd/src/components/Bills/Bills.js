@@ -266,7 +266,7 @@ const Bills = () => {
             <div className="dashboard-content">
                 <div className="bills-container">
                     <div className="bills-header">
-                        <h2>Bills Management</h2>
+                        <h2>Fixed Expenses</h2>
                         <button className="add-bill-btn" onClick={() => setShowBillModal(true)}>
                             Add New Bill
                         </button>
@@ -276,7 +276,7 @@ const Bills = () => {
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Bill Name</th>
+                                    <th>Expense Name</th>
                                     <th>Amount</th>
                                     <th>Due Date</th>
                                     <th>Status</th>

@@ -6,6 +6,21 @@ import pic from './../pic.png';
 
 const Landing = () => {
     const navigate = useNavigate();
+    const isLoggedIn = localStorage.getItem('authToken'); // Check if user is logged in
+    const hasVisitedLanding = localStorage.getItem('hasVisitedLanding'); // Track if user has visited landing
+
+    const handleLogoClick = () => {
+        if (isLoggedIn) {
+            if (!hasVisitedLanding) {
+                // First time clicking logo while logged in
+                localStorage.setItem('hasVisitedLanding', 'true');
+                navigate('/');
+            } else {
+                // Subsequent clicks while logged in
+                navigate('/dashboard');
+            }
+        }
+    };
 
     return (
         <div className="landing-container">
@@ -23,28 +38,33 @@ const Landing = () => {
                             cursor: 'pointer',
                             display: 'block'
                         }}
+                        onClick={handleLogoClick}
                         onMouseOver={(e) => e.target.style.transform = 'scale(1.1) rotate(10deg)'}
                         onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                     />
-                    <h1 style={{ marginLeft: '4px' }}>BudgetWise</h1>
-                </div>
-                <div className="nav-links">
-                    <button 
-                        className="nav-btn login-btn"
-                        onClick={() => {
-                            // localStorage.clear(); // Clear any existing session data
-                            navigate('/login');
-                        }}
+                    <h1 
+                        style={{ marginLeft: '4px', cursor: 'pointer' }}
+                        onClick={handleLogoClick}
                     >
-                        Sign In
-                    </button>
-                    <button 
-                        className="nav-btn register-btn"
-                        onClick={() => navigate('/register')}
-                    >
-                        Get Started
-                    </button>
+                        BudgetWise
+                    </h1>
                 </div>
+                {!isLoggedIn && ( // Only show nav buttons if not logged in
+                    <div className="nav-links">
+                        <button 
+                            className="nav-btn login-btn"
+                            onClick={() => navigate('/login')}
+                        >
+                            Sign In
+                        </button>
+                        <button 
+                            className="nav-btn register-btn"
+                            onClick={() => navigate('/register')}
+                        >
+                            Get Started
+                        </button>
+                    </div>
+                )}
             </nav>
 
             <section className="hero-section">
@@ -53,12 +73,14 @@ const Landing = () => {
                     <p>
                         Take control of your finances effortlessly! With our platform, you can easily manage your accounts, categorize expenses, and track bills—all in one secure, user-friendly space.
                     </p>
-                    <button 
-                        className="cta-btn"
-                        onClick={() => navigate('/register')}
-                    >
-                        Start Your Journey
-                    </button>
+                    {!isLoggedIn && ( // Only show CTA button if not logged in
+                        <button 
+                            className="cta-btn"
+                            onClick={() => navigate('/register')}
+                        >
+                            Start Your Journey
+                        </button>
+                    )}
                 </div>
                 <div className="hero-image">
                     <img 
@@ -112,13 +134,6 @@ const Landing = () => {
                         <p>Bank-grade security to protect your financial data and transactions.</p>
                     </div>
                 </div>
-                {/* <div className="features-preview">
-                    <img 
-                        src="https://www.idfcfirstbank.com/content/dam/idfcfirstbank/images/blog/finance/difference-between-money-finance-funds-717X404.jpg"
-                        alt="Features Preview"
-                        className="features-img"
-                    />
-                </div> */}
             </section>
 
             <section className="benefits-section">
@@ -145,12 +160,14 @@ const Landing = () => {
             <section className="cta-section">
                 <h2>Ready to Take Control of Your Finances?</h2>
                 <p>Join thousands of users who are already managing their finances smarter.</p>
-                <button 
-                    className="cta-btn"
-                    onClick={() => navigate('/register')}
-                >
-                    Get Started Now
-                </button>
+                {!isLoggedIn && ( // Only show CTA button if not logged in
+                    <button 
+                        className="cta-btn"
+                        onClick={() => navigate('/register')}
+                    >
+                        Get Started Now
+                    </button>
+                )}
             </section>
 
             <footer className="landing-footer">

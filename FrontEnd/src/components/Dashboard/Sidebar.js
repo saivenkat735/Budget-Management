@@ -73,7 +73,7 @@ const Sidebar = () => {
                     <FaExchangeAlt /> <span>Transactions</span>
                 </Link>
                 <Link to="/bills" className={`nav-item ${currentPath === '/bills' ? 'active' : ''}`}>
-                    <FaFileInvoice /> <span>Bills</span>
+                    <FaFileInvoice /> <span>Fixed Expenses</span>
                 </Link>
 
                 {/* Categories Section */}
