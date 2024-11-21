@@ -171,7 +171,7 @@ const Bills = () => {
             let billCategory = categories.find(cat => cat.categoryName === "Bill");
             if (!billCategory) {
                 const newCategory = {
-                    categoryName: "Bill",
+                    categoryName: "Fixed Expenses",
                     type: "DEBIT",
                     personId: personId,
                     isFloatingExpense: false
