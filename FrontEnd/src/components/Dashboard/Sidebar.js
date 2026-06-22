@@ -10,7 +10,8 @@ import {
     FaTags,
     FaList,
     FaArrowLeft,
-    FaSignOutAlt
+    FaSignOutAlt,
+    FaBookOpen
 } from 'react-icons/fa';
 import './Sidebar.css';
 import { useAuth } from '../../context/AuthContext';
@@ -89,6 +90,9 @@ const Sidebar = () => {
 
                 <Link to="/reports" className={`nav-item ${currentPath === '/reports' ? 'active' : ''}`}>
                     <FaChartPie /> <span>Analytics</span>
+                </Link>
+                <Link to="/knowledge" className={`nav-item ${currentPath === '/knowledge' ? 'active' : ''}`}>
+                    <FaBookOpen /> <span>Knowledge Base</span>
                 </Link>
                 {/* <Link to="/settings" className={`nav-item ${currentPath === '/settings' ? 'active' : ''}`}>
                     <FaCog /> <span>Settings</span>

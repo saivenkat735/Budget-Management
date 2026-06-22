@@ -13,6 +13,8 @@ import './App.css';
 import Bills from './components/Bills/Bills';
 import Category from './components/Category/Category.';
 import FinancialReports from './components/Analytics/FinancialReports';
+import KnowledgeBase from './components/KnowledgeBase/KnowledgeBase';
+import ChatWidget from './components/AIChat/ChatWidget';
 
 function App() {
     return (
@@ -52,9 +54,16 @@ function App() {
                           <ProtectedRoute>
                             <FinancialReports />
                           </ProtectedRoute>} />
+                          <Route path="/knowledge" element={
+                          <ProtectedRoute>
+                            <KnowledgeBase />
+                          </ProtectedRoute>} />
                         {/* <Route path="*" element={<Navigate to="/" />} /> */}
                     </Routes>
-                    
+
+                    {/* Floating AI assistant - visible on every page once logged in */}
+                    <ChatWidget />
+
                     <ToastContainer position="top-right" />
                 </div>
             </AuthProvider>
