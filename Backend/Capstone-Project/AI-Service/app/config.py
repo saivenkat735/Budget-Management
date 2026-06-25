@@ -44,7 +44,7 @@ class Settings(BaseSettings):
     llm_provider: str = "ollama"  # "ollama" | "openai"
     llm_base_url: str = "http://localhost:11434/v1"
     llm_api_key: str = "ollama"  # placeholder for ollama; real key for openai
-    llm_model: str = "llama3.1"
+    llm_model: str = "llama3.2:3b"
 
     # ---- Embeddings (free local sentence-transformers by default) ----
     embedding_provider: str = "sentence-transformers"  # "sentence-transformers" | "openai"
